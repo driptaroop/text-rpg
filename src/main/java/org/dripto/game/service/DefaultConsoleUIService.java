@@ -1,9 +1,13 @@
 package org.dripto.game.service;
 
+import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.map.Dungeon;
+import org.dripto.game.map.Room;
+
+import java.util.Set;
 
 public class DefaultConsoleUIService implements ConsoleUIService {
 
@@ -11,16 +15,34 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     GameInput input = GameInput.getInstance();
     CharacterCreatorService characterCreatorService = CharacterCreatorService.getInstance();
     Player player = null;
+    Set<Monster> monsters;
 
     @Override
     public void init(){
-        //showMainMenu();
-        drawMap();
+        showMainMenu();
+        initMap();
     }
 
-    private void drawMap() {
+    private void initMap() {
         Dungeon dungeon = new Dungeon();
+        addCharactersToMap(dungeon, player, monsters);
         System.out.println(dungeon);
+    }
+
+    private void addCharactersToMap(Dungeon dungeon, Player player, Set<Monster> monsters) {
+        placePlayer(dungeon, player);
+        placeMonsters(dungeon, monsters);
+    }
+
+    private void placeMonsters(Dungeon dungeon, Set<Monster> monsters) {
+        for(Monster m : monsters) {
+            Room room = dungeon.getEmptyRoom();
+            m.setToRoom(dungeon, room.getX(), room.getY());
+        }
+    }
+
+    private void placePlayer(Dungeon dungeon, Player player) {
+        player.setToRoom(dungeon, 0, 5);
     }
 
     private void showMainMenu(){
@@ -36,6 +58,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     private void newGame() {
         printer.printMessages("new_game");
         player = characterCreatorService.createCharacter();
+        monsters = characterCreatorService.getMonsters();
         System.out.println(player);
     }
 }

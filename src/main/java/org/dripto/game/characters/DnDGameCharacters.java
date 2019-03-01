@@ -1,8 +1,12 @@
 package org.dripto.game.characters;
 
+import org.dripto.game.exception.CharacterOutOfBoundsException;
 import org.dripto.game.items.Shield;
 import org.dripto.game.items.Weapon;
+import org.dripto.game.map.Directions;
+import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Room;
+import org.dripto.game.util.GameConstants;
 
 public abstract class DnDGameCharacters implements GameCharacters {
 
@@ -82,6 +86,36 @@ public abstract class DnDGameCharacters implements GameCharacters {
     @Override
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    @Override
+    public void move(Directions direction, Dungeon map, int steps) throws CharacterOutOfBoundsException {
+        int x = getRoom().getX();
+        int y = getRoom().getY();
+        getRoom().getCharactersInRoom().remove(this);
+        switch (direction){
+            case EAST:
+                x -= steps;
+                break;
+            case WEST:
+                x += steps;
+                break;
+            case NORTH:
+                y += steps;
+                break;
+            case SOUTH:
+                y -= steps;
+                break;
+        }
+        if(x < 0 || y < 0 || x >= GameConstants.DUNGEON_SIZE || y >= GameConstants.DUNGEON_SIZE){
+            throw new CharacterOutOfBoundsException();
+        }
+        setToRoom(map, x, y);
+    }
+    @Override
+    public void setToRoom(Dungeon map, int x, int y){
+        map.getRooms()[x][y].getCharactersInRoom().add(this);
+        setRoom(map.getRooms()[x][y]);
     }
 
     @Override

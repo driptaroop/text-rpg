@@ -1,6 +1,7 @@
 package org.dripto.game.map;
 
 import org.dripto.game.util.GameConstants;
+import org.dripto.game.util.Gameutils;
 
 public class Dungeon {
     private final Room[][] rooms;
@@ -12,6 +13,19 @@ public class Dungeon {
                 rooms[i][j] = new Room(i,j);
             }
         }
+    }
+
+    public Room getEmptyRoom(){
+        while(true){
+            int x = Gameutils.getRandomWithinRange(0, GameConstants.DUNGEON_SIZE - 1);
+            int y = Gameutils.getRandomWithinRange(0, GameConstants.DUNGEON_SIZE - 1);
+            if(getRooms()[x][y].getCharactersInRoom().isEmpty())
+                return getRooms()[x][y];
+        }
+    }
+
+    public Room[][] getRooms() {
+        return rooms;
     }
 
     @Override
