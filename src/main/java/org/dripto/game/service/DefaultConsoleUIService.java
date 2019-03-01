@@ -2,6 +2,7 @@ package org.dripto.game.service;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
+import org.dripto.game.exception.CharacterOutOfBoundsException;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.map.Dungeon;
@@ -16,17 +17,24 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     CharacterCreatorService characterCreatorService = CharacterCreatorService.getInstance();
     Player player = null;
     Set<Monster> monsters;
+    Dungeon dungeon;
+    private ExploreService exploreService = DefaultExploreService.getInstance();
 
     @Override
     public void init(){
         showMainMenu();
         initMap();
+        try {
+            this.exploreService.explore(dungeon, player);
+        } catch (CharacterOutOfBoundsException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initMap() {
-        Dungeon dungeon = new Dungeon();
+        this.dungeon = new Dungeon();
         addCharactersToMap(dungeon, player, monsters);
-        System.out.println(dungeon);
+        dungeon.showMap();
     }
 
     private void addCharactersToMap(Dungeon dungeon, Player player, Set<Monster> monsters) {

@@ -95,16 +95,16 @@ public abstract class DnDGameCharacters implements GameCharacters {
         getRoom().getCharactersInRoom().remove(this);
         switch (direction){
             case EAST:
-                x -= steps;
-                break;
-            case WEST:
-                x += steps;
-                break;
-            case NORTH:
                 y += steps;
                 break;
-            case SOUTH:
+            case WEST:
                 y -= steps;
+                break;
+            case NORTH:
+                x -= steps;
+                break;
+            case SOUTH:
+                x += steps;
                 break;
         }
         if(x < 0 || y < 0 || x >= GameConstants.DUNGEON_SIZE || y >= GameConstants.DUNGEON_SIZE){
@@ -116,6 +116,33 @@ public abstract class DnDGameCharacters implements GameCharacters {
     public void setToRoom(Dungeon map, int x, int y){
         map.getRooms()[x][y].getCharactersInRoom().add(this);
         setRoom(map.getRooms()[x][y]);
+    }
+
+    @Override
+    public int attacks(GameCharacters other){
+        int attack = getBaseAttack();
+        if(getWeapon() != null)
+            attack += getWeapon().getModifier();
+
+        int otherDefense = other.getBaseDefense();
+        if(getShield() != null)
+            otherDefense += getShield().getModifier();
+
+        int damage = attack - otherDefense;
+        if (damage <= 0) damage = 0;
+
+        other.damage(damage);
+        return damage;
+    }
+
+    @Override
+    public boolean isAlive(){
+        return getHp() > 0;
+    }
+
+    @Override
+    public void damage(int damage){
+        setHp(getHp() - damage);
     }
 
     @Override

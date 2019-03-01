@@ -39,4 +39,10 @@ public interface GameCharacters {
     void move(Directions direction, Dungeon map, int steps) throws CharacterOutOfBoundsException;
 
     void setToRoom(Dungeon map, int x, int y);
+
+    int attacks(GameCharacters other);
+
+    boolean isAlive();
+
+    void damage(int damage);
 }

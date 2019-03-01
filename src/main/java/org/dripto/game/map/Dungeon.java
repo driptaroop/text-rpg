@@ -28,6 +28,10 @@ public class Dungeon {
         return rooms;
     }
 
+    public void showMap(){
+        System.out.println(this);
+    }
+
     @Override
     public String toString() {
         StringBuilder map = new StringBuilder();

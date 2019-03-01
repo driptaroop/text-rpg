@@ -27,7 +27,7 @@ public class GameInput {
     }
 
     public int readIntegerInput(){
-        return scanner.nextInt();
+        return Integer.parseInt(readInput());
     }
 
     public int readIntegerInput(String msgKey){
