@@ -1,7 +1,11 @@
 package org.dripto.game.service;
 
+import org.dripto.game.characters.NPC;
 import org.dripto.game.characters.Player;
 import org.dripto.game.exception.CharacterOutOfBoundsException;
+import org.dripto.game.exception.ExitGameException;
+import org.dripto.game.exception.WrongChoiceException;
+import org.dripto.game.fight.FightStatus;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.map.Directions;
@@ -13,6 +17,7 @@ public class DefaultExploreService implements ExploreService {
     private static DefaultExploreService mInstance;
     GameMessagePrinter printer = GameMessagePrinter.getInstance();
     GameInput input = GameInput.getInstance();
+    DefaultFightingService fightingService = new DefaultFightingService();
 
     private DefaultExploreService() {
     }
@@ -25,16 +30,28 @@ public class DefaultExploreService implements ExploreService {
     }
 
     @Override
-    public void explore(Dungeon dungeon, Player player) throws CharacterOutOfBoundsException {
-        Directions direction = showExplorationMenu();
-        player.move(direction, dungeon, GameConstants.STEP_SIZE);
-        dungeon.showMap();
+    public void explore(Dungeon dungeon, Player player) throws ExitGameException {
+        boolean explore = true;
+        while (explore) {
+            try {
+                Directions direction = showExplorationMenu();
+                player.move(direction, dungeon, GameConstants.STEP_SIZE);
+                NPC enemy = player.inConflictWith();
+                if(enemy != null){
+                    FightStatus fightStatus = fightingService.initiateFight(player, enemy);
+                    System.out.println(fightStatus);
+                }
+            }catch (WrongChoiceException e){
+                System.err.println(e.getMessage());
+            } catch (CharacterOutOfBoundsException e) {
+                System.err.println(e.getMessage());
+            }
+            dungeon.showMap();
+        }
     }
 
-    private Directions showExplorationMenu() {
-        String ex = input.readInput("exploration_menu");
-        System.out.println(ex);
-        switch (ex){
+    private Directions showExplorationMenu() throws WrongChoiceException, ExitGameException {
+        switch (input.readInput("exploration_menu")){
             case "w":
                 return Directions.NORTH;
             case "a":
@@ -43,9 +60,10 @@ public class DefaultExploreService implements ExploreService {
                 return Directions.SOUTH;
             case "d":
                 return Directions.EAST;
+            case "quit":
+                throw new ExitGameException(printer.getMessage("exit_game"));
             default:
-                System.out.println("incorrect");
-                return null;
+                throw new WrongChoiceException(printer.getMessage("incorrect_choice"));
         }
     }
 }

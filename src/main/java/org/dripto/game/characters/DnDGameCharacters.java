@@ -1,6 +1,7 @@
 package org.dripto.game.characters;
 
 import org.dripto.game.exception.CharacterOutOfBoundsException;
+import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.items.Shield;
 import org.dripto.game.items.Weapon;
 import org.dripto.game.map.Directions;
@@ -17,12 +18,15 @@ public abstract class DnDGameCharacters implements GameCharacters {
     private Weapon weapon;
     private Shield shield;
     private final int luck;
-    private int baseHp = 5;
+    private int fullHp;
     private Room room;
+
+    private GameMessagePrinter printer = GameMessagePrinter.getInstance();
 
     public DnDGameCharacters(String name, int hp, int baseAttack, int baseDefense, Weapon weapon, Shield shield, int luck) {
         this.name = name;
-        this.hp = hp + baseHp;
+        this.hp = hp + GameConstants.BASE_HP;
+        this.fullHp = this.hp;
         this.baseAttack = baseAttack;
         this.baseDefense = baseDefense;
         this.weapon = weapon;
@@ -31,11 +35,17 @@ public abstract class DnDGameCharacters implements GameCharacters {
     }
 
     public int getTotalAttack(){
-        return baseAttack + weapon.getModifier();
+        int totalAttack = baseAttack;
+        if(getWeapon() != null)
+            totalAttack += getWeapon().getModifier();
+        return totalAttack;
     }
 
     public int getTotalDefense(){
-        return baseDefense + shield.getModifier();
+        int totalDefense = baseDefense;
+        if(getShield() != null)
+            totalDefense += shield.getModifier();
+        return totalDefense;
     }
 
     public void setHp(int hp) {
@@ -92,7 +102,6 @@ public abstract class DnDGameCharacters implements GameCharacters {
     public void move(Directions direction, Dungeon map, int steps) throws CharacterOutOfBoundsException {
         int x = getRoom().getX();
         int y = getRoom().getY();
-        getRoom().getCharactersInRoom().remove(this);
         switch (direction){
             case EAST:
                 y += steps;
@@ -108,8 +117,9 @@ public abstract class DnDGameCharacters implements GameCharacters {
                 break;
         }
         if(x < 0 || y < 0 || x >= GameConstants.DUNGEON_SIZE || y >= GameConstants.DUNGEON_SIZE){
-            throw new CharacterOutOfBoundsException();
+            throw new CharacterOutOfBoundsException(printer.getMessage("character_out_of_bounds"));
         }
+        getRoom().getCharactersInRoom().remove(this);
         setToRoom(map, x, y);
     }
     @Override
@@ -120,19 +130,38 @@ public abstract class DnDGameCharacters implements GameCharacters {
 
     @Override
     public int attacks(GameCharacters other){
-        int attack = getBaseAttack();
-        if(getWeapon() != null)
-            attack += getWeapon().getModifier();
-
-        int otherDefense = other.getBaseDefense();
-        if(getShield() != null)
-            otherDefense += getShield().getModifier();
+        int attack = getTotalAttack();
+        int otherDefense = other.getTotalDefense();
 
         int damage = attack - otherDefense;
         if (damage <= 0) damage = 0;
 
         other.damage(damage);
+        if(other.isDead()){
+            loot(other);
+            other.remove();
+        }
         return damage;
+    }
+
+    public void remove(){
+        this.getRoom().getCharactersInRoom().remove(this);
+        setRoom(null);
+    }
+
+    private void loot(GameCharacters other) {
+        if(other.getWeapon() != null) {
+            if (getWeapon() == null || getWeapon().getModifier() < other.getWeapon().getModifier()) {
+                printer.printMessageFormatter("loot_msg", this.getName(), "weapon", other.getWeapon().getName(), other.getName());
+                setWeapon(other.getWeapon());
+            }
+        }
+        if(other.getShield() != null) {
+            if (getShield() == null || getShield().getModifier() < other.getWeapon().getModifier()) {
+                printer.printMessageFormatter("loot_msg", this.getName(), "shield", other.getWeapon().getName(), other.getName());
+                setShield(other.getShield());
+            }
+        }
     }
 
     @Override
@@ -145,6 +174,19 @@ public abstract class DnDGameCharacters implements GameCharacters {
         setHp(getHp() - damage);
     }
 
+    public NPC inConflictWith(){
+        for(GameCharacters gameCharacters : getRoom().getCharactersInRoom()){
+            if(gameCharacters instanceof NPC && ((NPC)gameCharacters).isHostile())
+                return ((NPC)gameCharacters);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isDead(){
+        return !isAlive();
+    }
+
     @Override
     public String toString() {
         return "DnDGameCharacters{" +
@@ -155,7 +197,11 @@ public abstract class DnDGameCharacters implements GameCharacters {
                 ", weapon=" + weapon +
                 ", shield=" + shield +
                 ", luck=" + luck +
-                ", baseHp=" + baseHp +
+                ", fullHp=" + fullHp +
                 '}';
+    }
+
+    public void resetHp(){
+        setHp(fullHp);
     }
 }

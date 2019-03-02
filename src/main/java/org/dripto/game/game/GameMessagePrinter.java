@@ -8,7 +8,7 @@ import java.util.Properties;
 public class GameMessagePrinter {
 
     private static GameMessagePrinter mInstance;
-    Properties properties;
+    private Properties properties;
 
     private GameMessagePrinter() {
         InputStream is = getClass().getClassLoader().getResourceAsStream("messages.properties");
@@ -18,6 +18,14 @@ public class GameMessagePrinter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public String getMessage(String key){
+        return getProperties().getProperty(key);
     }
 
     public static GameMessagePrinter getInstance() {
@@ -30,6 +38,12 @@ public class GameMessagePrinter {
 
     public void printMessage(String msgKey){
         System.out.println(properties.getProperty(msgKey));
+        System.out.flush();
+    }
+
+    public void printMessageFormatter(String msgKey, String... fmt){
+        String formattedString = String.format(properties.getProperty(msgKey), fmt);
+        System.out.println(formattedString);
         System.out.flush();
     }
 

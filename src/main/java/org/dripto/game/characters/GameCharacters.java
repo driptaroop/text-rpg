@@ -45,4 +45,8 @@ public interface GameCharacters {
     boolean isAlive();
 
     void damage(int damage);
+
+    boolean isDead();
+
+    void remove();
 }

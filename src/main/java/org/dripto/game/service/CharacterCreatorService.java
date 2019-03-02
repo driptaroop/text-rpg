@@ -46,8 +46,8 @@ public class CharacterCreatorService {
         Set<Monster> monsters = new LinkedHashSet<>();
         IntStream.range(0, GameConstants.NUMBER_OF_MONSTERS)
                 .forEachOrdered(v -> monsters.add(new Monster(
-                        "Orc", Gameutils.getRandomWithinRange(5, 10)
-                        , Gameutils.getRandomWithinRange(3,5), Gameutils.getRandomWithinRange(2,3)
+                        "Orc", Gameutils.getRandomWithinRange(0,2)
+                        , Gameutils.getRandomWithinRange(2,4), Gameutils.getRandomWithinRange(1,2)
                         ,null, null, Gameutils.getRandomWithinRange(0,1), false
                 )));
         return monsters;
