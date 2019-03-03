@@ -51,4 +51,8 @@ public class GameMessagePrinter {
         Arrays.stream(msgKeys.split(" "))
                 .forEach(this::printMessage);
     }
+
+    public void printString(String msg){
+        System.out.println(msg);
+    }
 }

@@ -4,6 +4,7 @@ import org.dripto.game.characters.GameCharacters;
 import org.dripto.game.characters.NPC;
 import org.dripto.game.characters.Player;
 import org.dripto.game.exception.WrongChoiceException;
+import org.dripto.game.fight.FightResult;
 import org.dripto.game.fight.FightStatus;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
@@ -18,36 +19,51 @@ public class DefaultFightingService {
     GameMessagePrinter printer = GameMessagePrinter.getInstance();
     GameInput gameInput = GameInput.getInstance();
 
-    public FightStatus initiateFight(Player player, NPC enemy) {
+    public FightResult initiateFight(Player player, NPC enemy) {
         printer.printMessageFormatter("fight_initiate", enemy.getName());
-        return fight(resolveInitiative(player, enemy));
+        FightResult result = fight(resolveInitiative(player, enemy));
+        return result;
     }
 
-    private FightStatus fight(List<GameCharacters> order) {
+    public int gainExperience(Player player, NPC enemy) {
+        int exp = calculateExperience(player, enemy);
+        player.addExperience(exp);
+        return exp;
+    }
+
+    private int calculateExperience(Player player, NPC enemy) {
+        //TODO: exp calc logic
+        return 10;
+    }
+
+    private FightResult fight(List<GameCharacters> order) {
         while(true){
             for(int i = 0; i < order.size(); i++) {
+                NPC npc;
+                Player player;
                 if(order.get(i) instanceof Player) {
-                    NPC npc = (NPC) order.get(1 - i);
-                    Player player = (Player) order.get(i);
-                    Optional<FightStatus> result = playerFights(player, npc);
+                    npc = (NPC) order.get(1 - i);
+                    player = (Player) order.get(i);
+                    Optional<FightResult> result = playerFights(player, npc);
                     if(result.isPresent()) {
                         return result.get();
                     }
                 }
                 else {
-                    NPC npc = (NPC) order.get(i);
-                    Player player = (Player) order.get(1-i);
+                    npc = (NPC) order.get(i);
+                    player = (Player) order.get(1-i);
                     int damage = npc.attacks(player);
                     printer.printMessageFormatter("fight_damage", npc.getName(), player.getName(), Integer.toString(damage));
                     if(player.isDead()) {
-                        return FightStatus.DIED;
+                        return FightResult.DIED;
                     }
                 }
+                printer.printString(FightStatus.getFightStatus(player, npc));
             }
         }
     }
 
-    Optional<FightStatus> playerFights(Player player, NPC npc){
+    Optional<FightResult> playerFights(Player player, NPC npc){
         boolean invalidInput;
         do {
             invalidInput = false;
@@ -58,11 +74,13 @@ public class DefaultFightingService {
                         printer.printMessageFormatter("fight_damage", player.getName(), npc.getName(), Integer.toString(damage));
                         if (npc.isDead()) {
                             player.resetHp();
-                            return Optional.ofNullable(FightStatus.WON);
+                            player.loot(npc);
+                            npc.remove();
+                            return Optional.ofNullable(FightResult.WON);
                         }
                         break;
                     case "2":
-                        return Optional.ofNullable(FightStatus.FLEE);
+                        return Optional.ofNullable(FightResult.FLEE);
                     default:
                         throw new WrongChoiceException(printer.getMessage("incorrect_choice"));
                 }

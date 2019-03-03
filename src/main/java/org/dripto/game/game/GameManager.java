@@ -1,6 +1,7 @@
 package org.dripto.game.game;
 
 import org.dripto.game.exception.ExitGameException;
+import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.service.ConsoleUIService;
 import org.dripto.game.service.DefaultConsoleUIService;
 
@@ -11,7 +12,7 @@ public class GameManager {
     public void init(){
         try {
             consoleUIService.init();
-        } catch (ExitGameException e) {
+        } catch (ExitGameException | PlayerDiedException e) {
             System.err.println(e.getMessage());
             this.exitGame();
         }

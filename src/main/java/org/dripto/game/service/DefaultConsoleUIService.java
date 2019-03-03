@@ -2,8 +2,8 @@ package org.dripto.game.service;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
-import org.dripto.game.exception.CharacterOutOfBoundsException;
 import org.dripto.game.exception.ExitGameException;
+import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.map.Dungeon;
@@ -19,13 +19,14 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     Player player = null;
     Set<Monster> monsters;
     Dungeon dungeon;
-    private ExploreService exploreService = DefaultExploreService.getInstance();
+    private ExploreService exploreService = new DefaultExploreService();
 
     @Override
-    public void init() throws ExitGameException {
+    public void init() throws ExitGameException, PlayerDiedException {
         showMainMenu();
         initMap();
-        this.exploreService.explore(dungeon, player);
+        this.exploreService.explore(dungeon, player, monsters);
+        printer.printMessageFormatter("game_complete_msg", player.getName(), player.getName());
     }
 
     private void initMap() {

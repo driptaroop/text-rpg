@@ -124,6 +124,8 @@ public abstract class DnDGameCharacters implements GameCharacters {
     }
     @Override
     public void setToRoom(Dungeon map, int x, int y){
+        if(getRoom() != null)
+            map.getRooms()[getRoom().getX()][getRoom().getY()].getCharactersInRoom().remove(this);
         map.getRooms()[x][y].getCharactersInRoom().add(this);
         setRoom(map.getRooms()[x][y]);
     }
@@ -137,10 +139,6 @@ public abstract class DnDGameCharacters implements GameCharacters {
         if (damage <= 0) damage = 0;
 
         other.damage(damage);
-        if(other.isDead()){
-            loot(other);
-            other.remove();
-        }
         return damage;
     }
 
@@ -149,7 +147,7 @@ public abstract class DnDGameCharacters implements GameCharacters {
         setRoom(null);
     }
 
-    private void loot(GameCharacters other) {
+    public void loot(GameCharacters other) {
         if(other.getWeapon() != null) {
             if (getWeapon() == null || getWeapon().getModifier() < other.getWeapon().getModifier()) {
                 printer.printMessageFormatter("loot_msg", this.getName(), "weapon", other.getWeapon().getName(), other.getName());
@@ -187,6 +185,10 @@ public abstract class DnDGameCharacters implements GameCharacters {
         return !isAlive();
     }
 
+    public int getFullHp() {
+        return fullHp;
+    }
+
     @Override
     public String toString() {
         return "DnDGameCharacters{" +
@@ -202,6 +204,6 @@ public abstract class DnDGameCharacters implements GameCharacters {
     }
 
     public void resetHp(){
-        setHp(fullHp);
+        setHp(getFullHp());
     }
 }
