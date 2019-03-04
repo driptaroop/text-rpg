@@ -89,7 +89,7 @@ public class DefaultExploreService implements ExploreService {
                 return Explore.EAST;
             case "9":
                 return Explore.SAVE;
-            case "quit":
+            case "0":
                 throw new ExitGameException(printer.getMessage("exit_game"));
             default:
                 throw new WrongChoiceException(printer.getMessage("incorrect_choice"));

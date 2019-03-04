@@ -4,11 +4,12 @@ import org.dripto.game.exception.CharacterOutOfBoundsException;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.items.Shield;
 import org.dripto.game.items.Weapon;
-import org.dripto.game.map.Explore;
 import org.dripto.game.map.Dungeon;
+import org.dripto.game.map.Explore;
 import org.dripto.game.map.Room;
 import org.dripto.game.util.GameConstants;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 
 public abstract class DnDGameCharacters implements GameCharacters, Serializable {
@@ -23,7 +24,7 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
     private int fullHp;
     private Room room;
 
-    private final transient GameMessagePrinter printer = GameMessagePrinter.getInstance();
+    private transient GameMessagePrinter printer = GameMessagePrinter.getInstance();
 
     public DnDGameCharacters(String name, int hp, int baseAttack, int baseDefense, Weapon weapon, Shield shield, int luck) {
         this.name = name;
@@ -208,4 +209,10 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
     public void resetHp(){
         setHp(getFullHp());
     }
+
+    Object readResolve() throws ObjectStreamException {
+        this.printer = GameMessagePrinter.getInstance();
+        return this;
+    }
+
 }
