@@ -1,6 +1,8 @@
 package org.dripto.game.items;
 
-public enum Weapon implements Items {
+import java.io.Serializable;
+
+public enum Weapon implements Items, Serializable {
     KNIFE{
         private int modifier = 2;
         private String name = "Small Knife";

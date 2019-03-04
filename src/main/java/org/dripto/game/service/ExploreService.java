@@ -6,8 +6,10 @@ import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.map.Dungeon;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Set;
 
 public interface ExploreService {
-    void explore(Dungeon dungeon, Player player, Set<Monster> monsters) throws ExitGameException, PlayerDiedException;
+    void explore(Dungeon dungeon, Player player, Set<Monster> monsters) throws ExitGameException, PlayerDiedException, IOException;
 }

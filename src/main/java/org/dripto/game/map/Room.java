@@ -3,10 +3,11 @@ package org.dripto.game.map;
 import org.dripto.game.characters.GameCharacters;
 import org.dripto.game.characters.Player;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Room {
+public class Room implements Serializable {
     private final Set<GameCharacters> charactersInRoom = new HashSet<>();
     private int x;
     private int y;

@@ -37,14 +37,12 @@ public class GameMessagePrinter {
 
 
     public void printMessage(String msgKey){
-        System.out.println(properties.getProperty(msgKey));
-        System.out.flush();
+        printString(properties.getProperty(msgKey));
     }
 
     public void printMessageFormatter(String msgKey, String... fmt){
         String formattedString = String.format(properties.getProperty(msgKey), fmt);
-        System.out.println(formattedString);
-        System.out.flush();
+        printString(formattedString);
     }
 
     public void printMessages(String msgKeys){
@@ -54,5 +52,6 @@ public class GameMessagePrinter {
 
     public void printString(String msg){
         System.out.println(msg);
+        System.out.flush();
     }
 }

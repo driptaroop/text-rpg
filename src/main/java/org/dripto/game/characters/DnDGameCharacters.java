@@ -4,12 +4,14 @@ import org.dripto.game.exception.CharacterOutOfBoundsException;
 import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.items.Shield;
 import org.dripto.game.items.Weapon;
-import org.dripto.game.map.Directions;
+import org.dripto.game.map.Explore;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Room;
 import org.dripto.game.util.GameConstants;
 
-public abstract class DnDGameCharacters implements GameCharacters {
+import java.io.Serializable;
+
+public abstract class DnDGameCharacters implements GameCharacters, Serializable {
 
     private final String name;
     private int hp;
@@ -21,7 +23,7 @@ public abstract class DnDGameCharacters implements GameCharacters {
     private int fullHp;
     private Room room;
 
-    private GameMessagePrinter printer = GameMessagePrinter.getInstance();
+    private final transient GameMessagePrinter printer = GameMessagePrinter.getInstance();
 
     public DnDGameCharacters(String name, int hp, int baseAttack, int baseDefense, Weapon weapon, Shield shield, int luck) {
         this.name = name;
@@ -99,7 +101,7 @@ public abstract class DnDGameCharacters implements GameCharacters {
     }
 
     @Override
-    public void move(Directions direction, Dungeon map, int steps) throws CharacterOutOfBoundsException {
+    public void move(Explore direction, Dungeon map, int steps) throws CharacterOutOfBoundsException {
         int x = getRoom().getX();
         int y = getRoom().getY();
         switch (direction){

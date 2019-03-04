@@ -31,15 +31,21 @@ public class CharacterCreatorService {
         printer.printMessages("character_creation");
         String name = input.readInput("cc_name");
         String story = input.readInput("cc_story");
-        printer.printMessages("cc_skills_msg");
-        int health = input.readIntegerInput("cc_health");
-        int attack = input.readIntegerInput("cc_attack");
-        int defense = input.readIntegerInput("cc_defense");
-        int luck = input.readIntegerInput("cc_luck");
-        Player player = new Player(
+        printer.printMessageFormatter("cc_skills_msg", Integer.toString(GameConstants.ADDITIONAL_POINTS));
+        boolean incorrectPointsDistribution = false;
+        int health, attack, defense, luck;
+        do {
+            health = input.readIntegerInput("cc_health");
+            attack = input.readIntegerInput("cc_attack");
+            defense = input.readIntegerInput("cc_defense");
+            luck = input.readIntegerInput("cc_luck");
+            incorrectPointsDistribution = (health + attack + defense + luck) > GameConstants.ADDITIONAL_POINTS;
+            if(incorrectPointsDistribution)
+                printer.printMessage("incorrect_points");
+        }while (incorrectPointsDistribution);
+        return new Player(
                 name, health, attack, defense, null, null, luck, story, 0
         );
-        return player;
     }
 
     public Set<Monster> getMonsters(){

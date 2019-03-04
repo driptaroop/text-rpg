@@ -8,6 +8,11 @@
     <artifactId>text-rpg</artifactId>
     <version>1.0</version>
 
+    <dependencies>
+
+
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
@@ -16,6 +21,20 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>
+                                org.dripto.game.App
+                            </mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>

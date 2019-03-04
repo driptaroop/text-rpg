@@ -10,10 +10,12 @@ import org.dripto.game.exception.WrongChoiceException;
 import org.dripto.game.fight.FightResult;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
-import org.dripto.game.map.Directions;
+import org.dripto.game.game.SaveGameState;
 import org.dripto.game.map.Dungeon;
+import org.dripto.game.map.Explore;
 import org.dripto.game.util.GameConstants;
 
+import java.io.IOException;
 import java.util.Set;
 
 public class DefaultExploreService implements ExploreService {
@@ -26,30 +28,36 @@ public class DefaultExploreService implements ExploreService {
     }
 
     @Override
-    public void explore(Dungeon dungeon, Player player, Set<Monster> monsters) throws ExitGameException, PlayerDiedException {
+    public void explore(Dungeon dungeon, Player player, Set<Monster> monsters) throws ExitGameException, PlayerDiedException, IOException {
         boolean explore = true;
         while (explore) {
             try {
                 int lastx = player.getRoom().getX();
                 int lasty = player.getRoom().getY();
-                Directions direction = showExplorationMenu();
-                player.move(direction, dungeon, GameConstants.STEP_SIZE);
-                NPC enemy = player.inConflictWith();
-                if(enemy != null){
-                    FightResult fightResult = fightingService.initiateFight(player, enemy);
-                    switch (fightResult){
-                        case WON:
-                            printer.printMessageFormatter("win_msg", player.getName(), enemy.getName(),
-                                    Integer.toString(fightingService.gainExperience(player, enemy)));
-                            explore = !checkIfWon(monsters);
-                            break;
-                        case FLEE:
-                            printer.printMessage("flee_msg");
-                            player.setToRoom(dungeon, lastx, lasty);
-                            break;
-                        case DIED:
-                            printer.printMessage("die_msg");
-                            throw new PlayerDiedException("YOU DIED");
+                Explore direction = showExplorationMenu();
+                if(direction == Explore.SAVE){
+                    SaveGameState save = new SaveGameState(dungeon, player, monsters);
+                    SaveGameService.INSTANCE.saveGame(save);
+                    printer.printMessage("save_game");
+                }else {
+                    player.move(direction, dungeon, GameConstants.STEP_SIZE);
+                    NPC enemy = player.inConflictWith();
+                    if (enemy != null) {
+                        FightResult fightResult = fightingService.initiateFight(player, enemy);
+                        switch (fightResult) {
+                            case WON:
+                                printer.printMessageFormatter("win_msg", player.getName(), enemy.getName(),
+                                        Integer.toString(fightingService.gainExperience(player, enemy)));
+                                explore = !checkIfWon(monsters);
+                                break;
+                            case FLEE:
+                                printer.printMessage("flee_msg");
+                                player.setToRoom(dungeon, lastx, lasty);
+                                break;
+                            case DIED:
+                                printer.printMessage("die_msg");
+                                throw new PlayerDiedException("YOU DIED");
+                        }
                     }
                 }
             }catch (WrongChoiceException e){
@@ -69,16 +77,18 @@ public class DefaultExploreService implements ExploreService {
         return true;
     }
 
-    private Directions showExplorationMenu() throws WrongChoiceException, ExitGameException {
+    private Explore showExplorationMenu() throws WrongChoiceException, ExitGameException {
         switch (input.readInput("exploration_menu")){
             case "w":
-                return Directions.NORTH;
+                return Explore.NORTH;
             case "a":
-                return Directions.WEST;
+                return Explore.WEST;
             case "s":
-                return Directions.SOUTH;
+                return Explore.SOUTH;
             case "d":
-                return Directions.EAST;
+                return Explore.EAST;
+            case "9":
+                return Explore.SAVE;
             case "quit":
                 throw new ExitGameException(printer.getMessage("exit_game"));
             default:

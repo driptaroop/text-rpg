@@ -1,6 +1,8 @@
 package org.dripto.game.items;
 
-public enum Shield implements Items {
+import java.io.Serializable;
+
+public enum Shield implements Items , Serializable {
     WOODEN_SHIELD{
         private int modifier = 2;
         private String name = "Wooden Shield";

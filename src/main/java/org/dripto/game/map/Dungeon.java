@@ -3,7 +3,9 @@ package org.dripto.game.map;
 import org.dripto.game.util.GameConstants;
 import org.dripto.game.util.Gameutils;
 
-public class Dungeon {
+import java.io.Serializable;
+
+public class Dungeon implements Serializable {
     private final Room[][] rooms;
 
     public Dungeon() {

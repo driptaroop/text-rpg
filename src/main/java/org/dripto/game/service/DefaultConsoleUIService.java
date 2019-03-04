@@ -6,9 +6,12 @@ import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.game.SaveGameState;
+import org.dripto.game.game.StartGameStatus;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Room;
 
+import java.io.IOException;
 import java.util.Set;
 
 public class DefaultConsoleUIService implements ConsoleUIService {
@@ -22,9 +25,22 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     private ExploreService exploreService = new DefaultExploreService();
 
     @Override
-    public void init() throws ExitGameException, PlayerDiedException {
-        showMainMenu();
-        initMap();
+    public void init() throws ExitGameException, PlayerDiedException, IOException, ClassNotFoundException {
+        StartGameStatus status = showMainMenu();
+        switch (status){
+            case NEW:
+                newGame();
+                initMap();
+                break;
+            case RESUME:
+                SaveGameState save = SaveGameService.INSTANCE.loadGame();
+                dungeon = save.getDungeon();
+                player = save.getPlayer();
+                monsters = save.getMonster();
+                printer.printMessage("load_game");
+                dungeon.showMap();
+                break;
+        }
         this.exploreService.explore(dungeon, player, monsters);
         printer.printMessageFormatter("game_complete_msg", player.getName(), player.getName());
     }
@@ -53,13 +69,14 @@ public class DefaultConsoleUIService implements ConsoleUIService {
         player.setToRoom(dungeon, 0, 5);
     }
 
-    private void showMainMenu(){
+    private StartGameStatus showMainMenu() throws ExitGameException {
         switch (input.readInput("welcome main_menu")){
             case "1":
-                newGame();
-                break;
+                return StartGameStatus.NEW;
+            case "2":
+                return StartGameStatus.RESUME;
             default:
-                break;
+                throw new ExitGameException(printer.getMessage("exit_game"));
         }
     }
 
