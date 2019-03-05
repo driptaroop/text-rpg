@@ -215,4 +215,36 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DnDGameCharacters)) return false;
+
+        DnDGameCharacters that = (DnDGameCharacters) o;
+
+        if (getHp() != that.getHp()) return false;
+        if (getBaseAttack() != that.getBaseAttack()) return false;
+        if (getBaseDefense() != that.getBaseDefense()) return false;
+        if (getLuck() != that.getLuck()) return false;
+        if (getFullHp() != that.getFullHp()) return false;
+        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
+        if (getWeapon() != that.getWeapon()) return false;
+        if (getShield() != that.getShield()) return false;
+        return getRoom() != null ? getRoom().equals(that.getRoom()) : that.getRoom() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + getHp();
+        result = 31 * result + getBaseAttack();
+        result = 31 * result + getBaseDefense();
+        result = 31 * result + (getWeapon() != null ? getWeapon().hashCode() : 0);
+        result = 31 * result + (getShield() != null ? getShield().hashCode() : 0);
+        result = 31 * result + getLuck();
+        result = 31 * result + getFullHp();
+        result = 31 * result + (getRoom() != null ? getRoom().hashCode() : 0);
+        result = 31 * result + (printer != null ? printer.hashCode() : 0);
+        return result;
+    }
 }

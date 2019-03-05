@@ -60,16 +60,14 @@ public class DefaultExploreService implements ExploreService {
                         }
                     }
                 }
-            }catch (WrongChoiceException e){
-                System.err.println(e.getMessage());
-            } catch (CharacterOutOfBoundsException e) {
-                System.err.println(e.getMessage());
+            }catch (WrongChoiceException | CharacterOutOfBoundsException e){
+                printer.printString(e.getMessage());
             }
             dungeon.showMap();
         }
     }
 
-    private boolean checkIfWon(Set<Monster> monsters) {
+    boolean checkIfWon(Set<Monster> monsters) {
         for(Monster monster : monsters){
             if(monster.isAlive())
                 return false;
@@ -77,7 +75,7 @@ public class DefaultExploreService implements ExploreService {
         return true;
     }
 
-    private Explore showExplorationMenu() throws WrongChoiceException, ExitGameException {
+    Explore showExplorationMenu() throws WrongChoiceException, ExitGameException {
         switch (input.readInput("exploration_menu")){
             case "w":
                 return Explore.NORTH;

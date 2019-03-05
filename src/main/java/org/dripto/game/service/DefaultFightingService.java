@@ -31,9 +31,8 @@ public class DefaultFightingService {
         return exp;
     }
 
-    private int calculateExperience(Player player, NPC enemy) {
-        //TODO: exp calc logic
-        return 10;
+    int calculateExperience(Player player, NPC enemy) {
+        return enemy.getFullHp();
     }
 
     private FightResult fight(List<GameCharacters> order) {

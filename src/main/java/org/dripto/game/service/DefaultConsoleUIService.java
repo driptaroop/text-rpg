@@ -22,7 +22,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     Player player = null;
     Set<Monster> monsters;
     Dungeon dungeon;
-    private ExploreService exploreService = new DefaultExploreService();
+    ExploreService exploreService = new DefaultExploreService();
 
     @Override
     public void init() throws ExitGameException, PlayerDiedException, IOException, ClassNotFoundException {
@@ -45,7 +45,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
         printer.printMessageFormatter("game_complete_msg", player.getName(), player.getName());
     }
 
-    private void initMap() {
+    void initMap() {
         this.dungeon = new Dungeon();
         addCharactersToMap(dungeon, player, monsters);
         dungeon.showMap();
@@ -69,7 +69,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
         player.setToRoom(dungeon, 0, 5);
     }
 
-    private StartGameStatus showMainMenu() throws ExitGameException {
+    StartGameStatus showMainMenu() throws ExitGameException {
         switch (input.readInput("welcome main_menu")){
             case "1":
                 return StartGameStatus.NEW;
@@ -80,10 +80,10 @@ public class DefaultConsoleUIService implements ConsoleUIService {
         }
     }
 
-    private void newGame() {
+    void newGame() {
         printer.printMessages("new_game");
         player = characterCreatorService.createCharacter();
         monsters = characterCreatorService.getMonsters();
-        System.out.println(player);
+        printer.printString(player.toString());
     }
 }

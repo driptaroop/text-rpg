@@ -17,6 +17,10 @@ public class GameInput {
         return mInstance;
     }
 
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
     public String readInput(){
         return scanner.nextLine();
     }

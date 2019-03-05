@@ -50,4 +50,24 @@ public class Room implements Serializable {
             return "|_M_|";
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Room)) return false;
+
+        Room room = (Room) o;
+
+        if (getX() != room.getX()) return false;
+        if (getY() != room.getY()) return false;
+        return getCharactersInRoom() != null ? getCharactersInRoom().equals(room.getCharactersInRoom()) : room.getCharactersInRoom() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getCharactersInRoom() != null ? getCharactersInRoom().size() : 0;
+        result = 31 * result + getX();
+        result = 31 * result + getY();
+        return result;
+    }
 }
