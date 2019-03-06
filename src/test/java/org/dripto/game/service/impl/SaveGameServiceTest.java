@@ -1,7 +1,7 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.Player;
-import org.dripto.game.game.GameInput;
+import org.dripto.game.util.GameInput;
 import org.dripto.game.game.SaveGameState;
 import org.dripto.game.map.Room;
 import org.junit.jupiter.api.Test;
@@ -17,15 +17,15 @@ class SaveGameServiceTest {
 
     @Test
     void saveGame() throws IOException, ClassNotFoundException {
-        DefaultConsoleUIService service = new DefaultConsoleUIService();
+        DefaultConsoleUIService service = DefaultConsoleUIService.INSTANCE;
         String input = "test\nabc\n1\n2\n3\n4";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         service.newGame();
         service.initMap();
         SaveGameState save = new SaveGameState(service.dungeon, service.player, service.monsters);
-        SaveGameService.INSTANCE.saveGame(save);
-        SaveGameState loadedGame = SaveGameService.INSTANCE.loadGame();
+        DefaultSaveGameService.INSTANCE.saveGame(save);
+        SaveGameState loadedGame = DefaultSaveGameService.INSTANCE.loadGame();
         for (Room[] rooms : loadedGame.getDungeon().getRooms()) {
             for (Room room : rooms) {
                 assertEquals(room.getCharactersInRoom().size(),

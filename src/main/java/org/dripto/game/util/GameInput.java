@@ -1,23 +1,11 @@
-package org.dripto.game.game;
-
-import org.dripto.game.util.ConsoleColors;
+package org.dripto.game.util;
 
 import java.util.Scanner;
 
-public class GameInput {
-    private static GameInput mInstance;
+public enum GameInput {
+    INSTANCE;
     Scanner scanner = new Scanner(System.in);
-    GameMessagePrinter printer = GameMessagePrinter.getInstance();
-
-    private GameInput() {
-    }
-
-    public static GameInput getInstance() {
-        if (mInstance == null) {
-            mInstance = new GameInput();
-        }
-        return mInstance;
-    }
+    GameMessagePrinter printer = GameMessagePrinter.INSTANCE;
 
     public void setScanner(Scanner scanner) {
         this.scanner = scanner;

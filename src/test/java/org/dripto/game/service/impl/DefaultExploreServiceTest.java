@@ -1,9 +1,9 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.WrongChoiceException;
-import org.dripto.game.game.GameInput;
+import org.dripto.game.util.GameInput;
 import org.dripto.game.map.Explore;
 import org.dripto.game.util.GameConstants;
 import org.dripto.game.util.Gameutils;
@@ -28,7 +28,7 @@ class DefaultExploreServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new DefaultConsoleUIService();
+        service = DefaultConsoleUIService.INSTANCE;
         exploreService = (DefaultExploreService)service.exploreService;
     }
 
@@ -36,7 +36,7 @@ class DefaultExploreServiceTest {
     void exploreExit() {
         String input = "test\nabc\n1\n2\n3\n4\n1\n0";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         service.newGame();
         service.initMap();
         System.out.println(service.player);
@@ -64,7 +64,7 @@ class DefaultExploreServiceTest {
     void showExplorationMenu() throws WrongChoiceException, ExitGameException {
         String input = "w";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         Explore explore = exploreService.showExplorationMenu();
         assertThat(explore, is(Explore.NORTH));
     }

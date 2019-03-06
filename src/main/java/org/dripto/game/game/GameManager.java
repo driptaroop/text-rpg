@@ -3,15 +3,16 @@ package org.dripto.game.game;
 import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.service.ConsoleUIService;
-import org.dripto.game.service.DefaultConsoleUIService;
+import org.dripto.game.service.impl.DefaultConsoleUIService;
+import org.dripto.game.util.GameMessagePrinter;
 
 import java.io.IOException;
 
 public class GameManager {
 
-    ConsoleUIService consoleUIService = new DefaultConsoleUIService();
+    ConsoleUIService consoleUIService = DefaultConsoleUIService.INSTANCE;
 
-    GameMessagePrinter printer = GameMessagePrinter.getInstance();
+    GameMessagePrinter printer = GameMessagePrinter.INSTANCE;
     public void init(){
         try {
             printer.printAscii("dnd");

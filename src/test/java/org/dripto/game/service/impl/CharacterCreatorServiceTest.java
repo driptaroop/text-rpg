@@ -1,9 +1,10 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
-import org.dripto.game.game.GameInput;
+import org.dripto.game.util.GameInput;
+import org.dripto.game.service.CharacterCreatorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,14 +23,14 @@ class CharacterCreatorServiceTest {
     CharacterCreatorService service;
     @BeforeEach
     void setUp() {
-        service = CharacterCreatorService.getInstance();
+        service = DefaultCharacterCreatorService.INSTANCE;
     }
 
     @Test
     void createCharacter() {
         String input = "test\nabc\n1\n2\n3\n4";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         Player actual = service.createCharacter();
         Player expected = new Player(
                 "test", 1, 2, 3, null, null, 4, "abc", 0

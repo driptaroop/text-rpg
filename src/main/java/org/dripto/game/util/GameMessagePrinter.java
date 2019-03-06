@@ -1,18 +1,15 @@
-package org.dripto.game.game;
-
-import org.dripto.game.util.ConsoleColors;
+package org.dripto.game.util;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-public class GameMessagePrinter {
-
-    private static GameMessagePrinter mInstance;
+public enum GameMessagePrinter {
+    INSTANCE;
     private Properties properties;
 
-    private GameMessagePrinter() {
+    GameMessagePrinter() {
         InputStream is = getClass().getClassLoader().getResourceAsStream("messages.properties");
         properties = new Properties();
         try {
@@ -28,13 +25,6 @@ public class GameMessagePrinter {
 
     public String getMessage(String key){
         return getProperties().getProperty(key);
-    }
-
-    public static GameMessagePrinter getInstance() {
-        if (mInstance == null) {
-            mInstance = new GameMessagePrinter();
-        }
-        return mInstance;
     }
 
 

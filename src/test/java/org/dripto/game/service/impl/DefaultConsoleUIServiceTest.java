@@ -1,7 +1,7 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.exception.ExitGameException;
-import org.dripto.game.game.GameInput;
+import org.dripto.game.util.GameInput;
 import org.dripto.game.game.StartGameStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,14 +21,14 @@ class DefaultConsoleUIServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new DefaultConsoleUIService();
+        service = DefaultConsoleUIService.INSTANCE;
     }
 
     @Test
     void showMainMenuNew() throws ExitGameException {
         String input = "1";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         StartGameStatus status = service.showMainMenu();
         assertThat(status, is(StartGameStatus.NEW));
     }
@@ -36,7 +36,7 @@ class DefaultConsoleUIServiceTest {
     void showMainMenuLoad() throws ExitGameException {
         String input = "2";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         StartGameStatus status = service.showMainMenu();
         assertThat(status, is(StartGameStatus.RESUME));
     }
@@ -44,7 +44,7 @@ class DefaultConsoleUIServiceTest {
     void showMainMenuExit() {
         String input = "w";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         assertThrows(ExitGameException.class, () -> service.showMainMenu());
     }
 
@@ -52,7 +52,7 @@ class DefaultConsoleUIServiceTest {
     void initMap() {
         String input = "test\nabc\n1\n2\n3\n4";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         service.newGame();
         service.initMap();
         assertNotNull(service.dungeon);
@@ -64,7 +64,7 @@ class DefaultConsoleUIServiceTest {
     void newGame() {
         String input = "test\nabc\n1\n2\n3\n4";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         service.newGame();
         assertNotNull(service.player);
         assertNotNull(service.monsters);

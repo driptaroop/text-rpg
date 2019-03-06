@@ -1,29 +1,36 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
 import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.PlayerDiedException;
-import org.dripto.game.game.GameInput;
-import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.util.GameInput;
+import org.dripto.game.util.GameMessagePrinter;
 import org.dripto.game.game.SaveGameState;
 import org.dripto.game.game.StartGameStatus;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Room;
+import org.dripto.game.service.CharacterCreatorService;
+import org.dripto.game.service.ConsoleUIService;
+import org.dripto.game.service.ExploreService;
+import org.dripto.game.service.SaveGameService;
 import org.dripto.game.util.ConsoleColors;
 
 import java.io.IOException;
 import java.util.Set;
 
-public class DefaultConsoleUIService implements ConsoleUIService {
+public enum DefaultConsoleUIService implements ConsoleUIService {
 
-    GameMessagePrinter printer = GameMessagePrinter.getInstance();
-    GameInput input = GameInput.getInstance();
-    CharacterCreatorService characterCreatorService = CharacterCreatorService.getInstance();
+    INSTANCE;
+
+    GameMessagePrinter printer = GameMessagePrinter.INSTANCE;
+    GameInput input = GameInput.INSTANCE;
+    CharacterCreatorService characterCreatorService = DefaultCharacterCreatorService.INSTANCE;
     Player player = null;
     Set<Monster> monsters;
     Dungeon dungeon;
-    ExploreService exploreService = new DefaultExploreService();
+    ExploreService exploreService = DefaultExploreService.INSTANCE;
+    SaveGameService saveGameService = DefaultSaveGameService.INSTANCE;
 
     @Override
     public void init() throws ExitGameException, PlayerDiedException, IOException, ClassNotFoundException {
@@ -34,7 +41,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
                 initMap();
                 break;
             case RESUME:
-                SaveGameState save = SaveGameService.INSTANCE.loadGame();
+                SaveGameState save = saveGameService.loadGame();
                 dungeon = save.getDungeon();
                 player = save.getPlayer();
                 monsters = save.getMonster();

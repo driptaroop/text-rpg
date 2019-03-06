@@ -1,4 +1,4 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.NPC;
@@ -8,25 +8,27 @@ import org.dripto.game.exception.ExitGameException;
 import org.dripto.game.exception.PlayerDiedException;
 import org.dripto.game.exception.WrongChoiceException;
 import org.dripto.game.fight.FightResult;
-import org.dripto.game.game.GameInput;
-import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.util.GameInput;
+import org.dripto.game.util.GameMessagePrinter;
 import org.dripto.game.game.SaveGameState;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Explore;
+import org.dripto.game.service.ExploreService;
+import org.dripto.game.service.FightingService;
+import org.dripto.game.service.SaveGameService;
 import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.GameConstants;
 
 import java.io.IOException;
 import java.util.Set;
 
-public class DefaultExploreService implements ExploreService {
+public enum DefaultExploreService implements ExploreService {
+    INSTANCE;
 
-    GameMessagePrinter printer = GameMessagePrinter.getInstance();
-    GameInput input = GameInput.getInstance();
-    DefaultFightingService fightingService = new DefaultFightingService();
-
-    public DefaultExploreService() {
-    }
+    GameMessagePrinter printer = GameMessagePrinter.INSTANCE;
+    GameInput input = GameInput.INSTANCE;
+    FightingService fightingService = DefaultFightingService.INSTANCE;
+    SaveGameService saveGameService = DefaultSaveGameService.INSTANCE;
 
     @Override
     public void explore(Dungeon dungeon, Player player, Set<Monster> monsters) throws ExitGameException, PlayerDiedException, IOException {
@@ -38,7 +40,7 @@ public class DefaultExploreService implements ExploreService {
                 Explore direction = showExplorationMenu();
                 if(direction == Explore.SAVE){
                     SaveGameState save = new SaveGameState(dungeon, player, monsters);
-                    SaveGameService.INSTANCE.saveGame(save);
+                    saveGameService.saveGame(save);
                     printer.printMessage("save_game", ConsoleColors.YELLOW);
                 }else {
                     player.move(direction, dungeon, GameConstants.STEP_SIZE);

@@ -1,10 +1,11 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
 import org.dripto.game.fight.FightResult;
-import org.dripto.game.game.GameInput;
+import org.dripto.game.util.GameInput;
 import org.dripto.game.map.Room;
+import org.dripto.game.service.FightingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,7 @@ class DefaultFightingServiceTest {
 
     Player player;
     Monster monster;
-    DefaultFightingService fightingService;
+    FightingService fightingService;
     @BeforeEach
     void setUp() {
         player = new Player(
@@ -31,14 +32,14 @@ class DefaultFightingServiceTest {
                 ,null, null, 1, false
         );
         monster.setRoom(new Room(1,1));
-        this.fightingService = new DefaultFightingService();
+        this.fightingService = DefaultFightingService.INSTANCE;
     }
 
     @Test
     void initiateFightWon() {
         String input = "1";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         FightResult result = fightingService.initiateFight(player, monster);
         assertThat(result, is(FightResult.WON));
     }
@@ -54,7 +55,7 @@ class DefaultFightingServiceTest {
         );
         String input = "1";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         FightResult result = fightingService.initiateFight(player, monster);
         assertThat(result, is(FightResult.DIED));
     }
@@ -63,7 +64,7 @@ class DefaultFightingServiceTest {
     void initiateFightFLEE() {
         String input = "2";
         InputStream in = new ByteArrayInputStream(input.getBytes());
-        GameInput.getInstance().setScanner(new Scanner(in));
+        GameInput.INSTANCE.setScanner(new Scanner(in));
         FightResult result = fightingService.initiateFight(player, monster);
         assertThat(result, is(FightResult.FLEE));
     }

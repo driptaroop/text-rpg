@@ -1,4 +1,4 @@
-package org.dripto.game.service;
+package org.dripto.game.service.impl;
 
 import org.dripto.game.characters.GameCharacters;
 import org.dripto.game.characters.NPC;
@@ -6,8 +6,9 @@ import org.dripto.game.characters.Player;
 import org.dripto.game.exception.WrongChoiceException;
 import org.dripto.game.fight.FightResult;
 import org.dripto.game.fight.FightStatus;
-import org.dripto.game.game.GameInput;
-import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.util.GameInput;
+import org.dripto.game.util.GameMessagePrinter;
+import org.dripto.game.service.FightingService;
 import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.Gameutils;
 
@@ -15,11 +16,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class DefaultFightingService {
+public enum DefaultFightingService implements FightingService {
+    INSTANCE;
 
-    GameMessagePrinter printer = GameMessagePrinter.getInstance();
-    GameInput gameInput = GameInput.getInstance();
+    GameMessagePrinter printer = GameMessagePrinter.INSTANCE;
+    GameInput gameInput = GameInput.INSTANCE;
 
+    @Override
     public FightResult initiateFight(Player player, NPC enemy) {
         printer.printAscii("fight");
         printer.printMessageFormatter("fight_initiate", ConsoleColors.RED_UNDERLINED, enemy.getName());
@@ -28,6 +31,7 @@ public class DefaultFightingService {
         return result;
     }
 
+    @Override
     public int gainExperience(Player player, NPC enemy) {
         int exp = calculateExperience(player, enemy);
         player.addExperience(exp);
