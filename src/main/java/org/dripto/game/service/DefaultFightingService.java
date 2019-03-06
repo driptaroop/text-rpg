@@ -8,6 +8,7 @@ import org.dripto.game.fight.FightResult;
 import org.dripto.game.fight.FightStatus;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.Gameutils;
 
 import java.util.Arrays;
@@ -20,7 +21,8 @@ public class DefaultFightingService {
     GameInput gameInput = GameInput.getInstance();
 
     public FightResult initiateFight(Player player, NPC enemy) {
-        printer.printMessageFormatter("fight_initiate", enemy.getName());
+        printer.printMessageFormatter("fight_initiate", ConsoleColors.RED_UNDERLINED, enemy.getName());
+        printer.printMessageFormatter("enemy_fight_init_status", ConsoleColors.CYAN_UNDERLINED, enemy.getWeapon().getName(), enemy.getShield().getName());
         FightResult result = fight(resolveInitiative(player, enemy));
         return result;
     }
@@ -52,12 +54,12 @@ public class DefaultFightingService {
                     npc = (NPC) order.get(i);
                     player = (Player) order.get(1-i);
                     int damage = npc.attacks(player);
-                    printer.printMessageFormatter("fight_damage", npc.getName(), player.getName(), Integer.toString(damage));
+                    printer.printMessageFormatter("fight_damage", ConsoleColors.YELLOW, npc.getName(), player.getName(), Integer.toString(damage));
                     if(player.isDead()) {
                         return FightResult.DIED;
                     }
                 }
-                printer.printString(FightStatus.getFightStatus(player, npc));
+                printer.printString(FightStatus.getFightStatus(player, npc), ConsoleColors.YELLOW_UNDERLINED);
             }
         }
     }
@@ -67,10 +69,10 @@ public class DefaultFightingService {
         do {
             invalidInput = false;
             try {
-                switch (gameInput.readInput("fight_menu")) {
+                switch (gameInput.readInput("fight_menu", ConsoleColors.GREEN_UNDERLINED)) {
                     case "1":
                         int damage = player.attacks(npc);
-                        printer.printMessageFormatter("fight_damage", player.getName(), npc.getName(), Integer.toString(damage));
+                        printer.printMessageFormatter("fight_damage", ConsoleColors.BLUE_UNDERLINED, player.getName(), npc.getName(), Integer.toString(damage));
                         if (npc.isDead()) {
                             player.resetHp();
                             player.loot(npc);
@@ -94,11 +96,11 @@ public class DefaultFightingService {
         int playerInitiative = Gameutils.getRandomWithinRange(0, player.getLuck());
         int enemyInitiative = Gameutils.getRandomWithinRange(0, enemy.getLuck());
         if(playerInitiative > enemyInitiative) {
-            printer.printMessage("player_initiative_first");
+            printer.printMessage("player_initiative_first", ConsoleColors.GREEN_UNDERLINED);
             return Arrays.asList(player, enemy);
         }
         else {
-            printer.printMessageFormatter("NPC_initiative_first", enemy.getName());
+            printer.printMessageFormatter("NPC_initiative_first", ConsoleColors.RED_UNDERLINED, enemy.getName());
             return Arrays.asList(enemy, player);
         }
     }

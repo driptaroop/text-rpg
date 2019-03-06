@@ -34,7 +34,13 @@ class CharacterCreatorServiceTest {
         Player expected = new Player(
                 "test", 1, 2, 3, null, null, 4, "abc", 0
         );
-        assertEquals(expected, actual);
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getHp(), actual.getHp());
+        assertEquals(expected.getBaseAttack(), actual.getBaseAttack());
+        assertEquals(expected.getBaseDefense(), actual.getBaseDefense());
+        assertEquals(expected.getLuck(), actual.getLuck());
+        assertEquals(expected.getBackground(), actual.getBackground());
+        assertEquals(expected.getExperience(), actual.getExperience());
     }
 
     @Test

@@ -1,5 +1,7 @@
 package org.dripto.game.game;
 
+import org.dripto.game.util.ConsoleColors;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -36,22 +38,23 @@ public class GameMessagePrinter {
     }
 
 
-    public void printMessage(String msgKey){
-        printString(properties.getProperty(msgKey));
+    public void printMessage(String msgKey, ConsoleColors color){
+        printString(properties.getProperty(msgKey), color);
     }
 
-    public void printMessageFormatter(String msgKey, String... fmt){
+    public void printMessageFormatter(String msgKey, ConsoleColors color, String... fmt){
         String formattedString = String.format(properties.getProperty(msgKey), fmt);
-        printString(formattedString);
+        printString(formattedString, color);
     }
 
-    public void printMessages(String msgKeys){
+    public void printMessages(String msgKeys, ConsoleColors color){
         Arrays.stream(msgKeys.split(" "))
-                .forEach(this::printMessage);
+                .forEach(msgKey -> printMessage(msgKey, color));
     }
 
-    public void printString(String msg){
-        System.out.println(msg);
+    public void printString(String msg, ConsoleColors color){
+        System.out.println(color.getColor() + msg);
+        System.out.println(ConsoleColors.RESET.getColor());
         System.out.flush();
     }
 }

@@ -1,5 +1,7 @@
 package org.dripto.game.game;
 
+import org.dripto.game.util.ConsoleColors;
+
 import java.util.Scanner;
 
 public class GameInput {
@@ -25,17 +27,28 @@ public class GameInput {
         return scanner.nextLine();
     }
 
-    public String readInput(String msgKey){
-        printer.printMessages(msgKey);
+    public String readInput(String msgKey, ConsoleColors color){
+        printer.printMessages(msgKey, color);
         return readInput();
     }
 
     public int readIntegerInput(){
-        return Integer.parseInt(readInput());
+        boolean incorrectInput = true;
+        int result = Integer.MIN_VALUE;
+        while (incorrectInput) {
+            try {
+                result = Integer.parseInt(readInput());
+                incorrectInput = false;
+            } catch (NumberFormatException e) {
+                printer.printString("That wasn't an interger. Please try again", ConsoleColors.RED);
+                incorrectInput = true;
+            }
+        }
+        return result;
     }
 
-    public int readIntegerInput(String msgKey){
-        printer.printMessages(msgKey);
+    public int readIntegerInput(String msgKey, ConsoleColors color){
+        printer.printMessages(msgKey, color);
         return readIntegerInput();
     }
 }

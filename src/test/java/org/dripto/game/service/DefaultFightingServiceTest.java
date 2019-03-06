@@ -44,8 +44,14 @@ class DefaultFightingServiceTest {
     }
     @Test
     void initiateFightLost() {
-        player.setHp(1);
-        monster.setHp(10);
+        player = new Player(
+                "test", 1, 11, 0, null, null, 1, "", 0
+        );
+        monster = new Monster(
+                "Orc", 100
+                , 100,100
+                ,null, null, 1, false
+        );
         String input = "1";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         GameInput.getInstance().setScanner(new Scanner(in));

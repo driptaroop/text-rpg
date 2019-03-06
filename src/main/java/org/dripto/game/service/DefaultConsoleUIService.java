@@ -10,6 +10,7 @@ import org.dripto.game.game.SaveGameState;
 import org.dripto.game.game.StartGameStatus;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Room;
+import org.dripto.game.util.ConsoleColors;
 
 import java.io.IOException;
 import java.util.Set;
@@ -37,12 +38,12 @@ public class DefaultConsoleUIService implements ConsoleUIService {
                 dungeon = save.getDungeon();
                 player = save.getPlayer();
                 monsters = save.getMonster();
-                printer.printMessage("load_game");
+                printer.printMessageFormatter("load_game", ConsoleColors.PURPLE, player.getName());
                 dungeon.showMap();
                 break;
         }
         this.exploreService.explore(dungeon, player, monsters);
-        printer.printMessageFormatter("game_complete_msg", player.getName(), player.getName());
+        printer.printMessageFormatter("game_complete_msg", ConsoleColors.PURPLE_BACKGROUND_BRIGHT, player.getName(), player.getName());
     }
 
     void initMap() {
@@ -70,7 +71,7 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     }
 
     StartGameStatus showMainMenu() throws ExitGameException {
-        switch (input.readInput("welcome main_menu")){
+        switch (input.readInput("welcome main_menu", ConsoleColors.YELLOW_UNDERLINED)){
             case "1":
                 return StartGameStatus.NEW;
             case "2":
@@ -81,9 +82,8 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     }
 
     void newGame() {
-        printer.printMessages("new_game");
+        printer.printMessages("new_game", ConsoleColors.CYAN_UNDERLINED);
         player = characterCreatorService.createCharacter();
         monsters = characterCreatorService.getMonsters();
-        printer.printString(player.toString());
     }
 }

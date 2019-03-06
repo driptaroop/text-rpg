@@ -1,5 +1,6 @@
 package org.dripto.game.service;
 
+import org.dripto.game.characters.Player;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.SaveGameState;
 import org.dripto.game.map.Room;
@@ -31,7 +32,16 @@ class SaveGameServiceTest {
                         save.getDungeon().getRooms()[room.getX()][room.getY()].getCharactersInRoom().size());
             }
         }
-        assertEquals(save.getPlayer(), loadedGame.getPlayer());
+        Player expected = save.getPlayer();
+        Player actual = loadedGame.getPlayer();
+
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getHp(), actual.getHp());
+        assertEquals(expected.getBaseAttack(), actual.getBaseAttack());
+        assertEquals(expected.getBaseDefense(), actual.getBaseDefense());
+        assertEquals(expected.getLuck(), actual.getLuck());
+        assertEquals(expected.getBackground(), actual.getBackground());
+        assertEquals(expected.getExperience(), actual.getExperience());
         assertEquals(save.getMonster().size(), loadedGame.getMonster().size());
     }
 }

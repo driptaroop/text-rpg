@@ -3,16 +3,24 @@ package org.dripto.game.items;
 import java.io.Serializable;
 
 public enum Weapon implements Items, Serializable {
-    KNIFE{
-        private int modifier = 2;
-        private String name = "Small Knife";
+    BARE_HANDS(0, "Bare Hands"),
+    KNIFE(2, "Small Knife"),
+    SHORT_SWORD(3, "Short Sword"),
+    LONG_SWORD(4, "Long Sword");
 
-        public int getModifier() {
-            return modifier;
-        }
+    Weapon(int modifier, String name) {
+        this.modifier = modifier;
+        this.name = name;
+    }
 
-        public String getName() {
-            return name;
-        }
+    int modifier;
+    String name;
+
+    public int getModifier() {
+        return this.modifier;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

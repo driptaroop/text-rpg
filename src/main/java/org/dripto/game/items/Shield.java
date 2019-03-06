@@ -3,16 +3,24 @@ package org.dripto.game.items;
 import java.io.Serializable;
 
 public enum Shield implements Items , Serializable {
-    WOODEN_SHIELD{
-        private int modifier = 2;
-        private String name = "Wooden Shield";
+    BARE_HANDS(0, "Bare Hands"),
+    WOODEN_SHIELD(2,"Wooden Shield"),
+    IRON_SHIELD(3, "Iron Shield"),
+    STEEL_SHIELD(4, "Steel Shield");
 
-        public int getModifier() {
-            return modifier;
-        }
+    private int modifier;
+    private String name;
 
-        public String getName() {
-            return name;
-        }
+    Shield(int modifier, String name) {
+        this.modifier = modifier;
+        this.name = name;
+    }
+
+    public int getModifier() {
+        return modifier;
+    }
+
+    public String getName() {
+        return name;
     }
 }

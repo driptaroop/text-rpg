@@ -7,7 +7,9 @@ import org.dripto.game.items.Weapon;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Explore;
 import org.dripto.game.map.Room;
+import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.GameConstants;
+import org.dripto.game.util.Gameutils;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -32,8 +34,10 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
         this.fullHp = this.hp;
         this.baseAttack = baseAttack;
         this.baseDefense = baseDefense;
-        this.weapon = weapon;
-        this.shield = shield;
+        if(weapon != null) this.weapon = weapon;
+        else this.weapon = Weapon.BARE_HANDS;
+        if(shield != null) this.shield = shield;
+        else this.shield = Shield.BARE_HANDS;
         this.luck = luck;
     }
 
@@ -135,8 +139,8 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
 
     @Override
     public int attacks(GameCharacters other){
-        int attack = getTotalAttack();
-        int otherDefense = other.getTotalDefense();
+        int attack = getTotalAttack() + Gameutils.getRandomWithinRange(0, getLuck());
+        int otherDefense = other.getTotalDefense() + Gameutils.getRandomWithinRange(0, other.getLuck());
 
         int damage = attack - otherDefense;
         if (damage <= 0) damage = 0;
@@ -153,14 +157,18 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
     public void loot(GameCharacters other) {
         if(other.getWeapon() != null) {
             if (getWeapon() == null || getWeapon().getModifier() < other.getWeapon().getModifier()) {
-                printer.printMessageFormatter("loot_msg", this.getName(), "weapon", other.getWeapon().getName(), other.getName());
+                printer.printMessageFormatter("loot_msg", ConsoleColors.GREEN_UNDERLINED, this.getName(), "weapon", other.getWeapon().getName(), other.getName());
+                getRoom().getCharactersInRoom().remove(this);
                 setWeapon(other.getWeapon());
+                getRoom().getCharactersInRoom().add(this);
             }
         }
         if(other.getShield() != null) {
             if (getShield() == null || getShield().getModifier() < other.getWeapon().getModifier()) {
-                printer.printMessageFormatter("loot_msg", this.getName(), "shield", other.getWeapon().getName(), other.getName());
+                printer.printMessageFormatter("loot_msg", ConsoleColors.GREEN_UNDERLINED, this.getName(), "shield", other.getShield().getName(), other.getName());
+                getRoom().getCharactersInRoom().remove(this);
                 setShield(other.getShield());
+                getRoom().getCharactersInRoom().add(this);
             }
         }
     }
@@ -213,38 +221,5 @@ public abstract class DnDGameCharacters implements GameCharacters, Serializable 
     Object readResolve() throws ObjectStreamException {
         this.printer = GameMessagePrinter.getInstance();
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DnDGameCharacters)) return false;
-
-        DnDGameCharacters that = (DnDGameCharacters) o;
-
-        if (getHp() != that.getHp()) return false;
-        if (getBaseAttack() != that.getBaseAttack()) return false;
-        if (getBaseDefense() != that.getBaseDefense()) return false;
-        if (getLuck() != that.getLuck()) return false;
-        if (getFullHp() != that.getFullHp()) return false;
-        if (getName() != null ? !getName().equals(that.getName()) : that.getName() != null) return false;
-        if (getWeapon() != that.getWeapon()) return false;
-        if (getShield() != that.getShield()) return false;
-        return getRoom() != null ? getRoom().equals(that.getRoom()) : that.getRoom() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + getHp();
-        result = 31 * result + getBaseAttack();
-        result = 31 * result + getBaseDefense();
-        result = 31 * result + (getWeapon() != null ? getWeapon().hashCode() : 0);
-        result = 31 * result + (getShield() != null ? getShield().hashCode() : 0);
-        result = 31 * result + getLuck();
-        result = 31 * result + getFullHp();
-        result = 31 * result + (getRoom() != null ? getRoom().hashCode() : 0);
-        result = 31 * result + (printer != null ? printer.hashCode() : 0);
-        return result;
     }
 }

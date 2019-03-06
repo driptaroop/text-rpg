@@ -35,22 +35,4 @@ public class Player extends DnDGameCharacters{
                 ", experience=" + experience +
                 "} " + super.toString();
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player)) return false;
-
-        Player player = (Player) o;
-
-        if (getExperience() != player.getExperience()) return false;
-        return getBackground() != null ? getBackground().equals(player.getBackground()) : player.getBackground() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getBackground() != null ? getBackground().hashCode() : 0;
-        result = 31 * result + getExperience();
-        return result;
-    }
 }

@@ -4,6 +4,10 @@ import org.dripto.game.characters.Monster;
 import org.dripto.game.characters.Player;
 import org.dripto.game.game.GameInput;
 import org.dripto.game.game.GameMessagePrinter;
+import org.dripto.game.items.Items;
+import org.dripto.game.items.Shield;
+import org.dripto.game.items.Weapon;
+import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.GameConstants;
 import org.dripto.game.util.Gameutils;
 
@@ -28,20 +32,20 @@ public class CharacterCreatorService {
     }
 
     public Player createCharacter(){
-        printer.printMessages("character_creation");
-        String name = input.readInput("cc_name");
-        String story = input.readInput("cc_story");
-        printer.printMessageFormatter("cc_skills_msg", Integer.toString(GameConstants.ADDITIONAL_POINTS));
+        printer.printMessages("character_creation", ConsoleColors.GREEN);
+        String name = input.readInput("cc_name", ConsoleColors.BLUE);
+        String story = input.readInput("cc_story", ConsoleColors.BLUE);
+        printer.printMessageFormatter("cc_skills_msg", ConsoleColors.GREEN, Integer.toString(GameConstants.ADDITIONAL_POINTS));
         boolean incorrectPointsDistribution = false;
         int health, attack, defense, luck;
         do {
-            health = input.readIntegerInput("cc_health");
-            attack = input.readIntegerInput("cc_attack");
-            defense = input.readIntegerInput("cc_defense");
-            luck = input.readIntegerInput("cc_luck");
+            health = input.readIntegerInput("cc_health", ConsoleColors.BLUE);
+            attack = input.readIntegerInput("cc_attack", ConsoleColors.BLUE);
+            defense = input.readIntegerInput("cc_defense", ConsoleColors.BLUE);
+            luck = input.readIntegerInput("cc_luck", ConsoleColors.BLUE);
             incorrectPointsDistribution = (health + attack + defense + luck) > GameConstants.ADDITIONAL_POINTS;
             if(incorrectPointsDistribution)
-                printer.printMessage("incorrect_points");
+                printer.printMessage("incorrect_points", ConsoleColors.RED);
         }while (incorrectPointsDistribution);
         return new Player(
                 name, health, attack, defense, null, null, luck, story, 0
@@ -54,8 +58,13 @@ public class CharacterCreatorService {
                 .forEachOrdered(v -> monsters.add(new Monster(
                         "Orc", Gameutils.getRandomWithinRange(0,2)
                         , Gameutils.getRandomWithinRange(2,4), Gameutils.getRandomWithinRange(1,2)
-                        ,null, null, Gameutils.getRandomWithinRange(0,1), false
+                        , (Weapon) getRandomItems(Weapon.class), (Shield) getRandomItems(Shield.class), Gameutils.getRandomWithinRange(0,1), false
                 )));
         return monsters;
+    }
+
+    private Items getRandomItems(Class clazz) {
+        int x = Gameutils.getRandomWithinRange(0, clazz.getEnumConstants().length - 1);
+        return (Items) clazz.getEnumConstants()[x];
     }
 }

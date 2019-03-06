@@ -13,6 +13,7 @@ import org.dripto.game.game.GameMessagePrinter;
 import org.dripto.game.game.SaveGameState;
 import org.dripto.game.map.Dungeon;
 import org.dripto.game.map.Explore;
+import org.dripto.game.util.ConsoleColors;
 import org.dripto.game.util.GameConstants;
 
 import java.io.IOException;
@@ -38,7 +39,7 @@ public class DefaultExploreService implements ExploreService {
                 if(direction == Explore.SAVE){
                     SaveGameState save = new SaveGameState(dungeon, player, monsters);
                     SaveGameService.INSTANCE.saveGame(save);
-                    printer.printMessage("save_game");
+                    printer.printMessage("save_game", ConsoleColors.YELLOW);
                 }else {
                     player.move(direction, dungeon, GameConstants.STEP_SIZE);
                     NPC enemy = player.inConflictWith();
@@ -46,22 +47,22 @@ public class DefaultExploreService implements ExploreService {
                         FightResult fightResult = fightingService.initiateFight(player, enemy);
                         switch (fightResult) {
                             case WON:
-                                printer.printMessageFormatter("win_msg", player.getName(), enemy.getName(),
+                                printer.printMessageFormatter("win_msg", ConsoleColors.GREEN_BOLD, player.getName(), enemy.getName(),
                                         Integer.toString(fightingService.gainExperience(player, enemy)));
                                 explore = !checkIfWon(monsters);
                                 break;
                             case FLEE:
-                                printer.printMessage("flee_msg");
+                                printer.printMessage("flee_msg", ConsoleColors.RED);
                                 player.setToRoom(dungeon, lastx, lasty);
                                 break;
                             case DIED:
-                                printer.printMessage("die_msg");
+                                printer.printMessage("die_msg", ConsoleColors.RED_BOLD_BRIGHT);
                                 throw new PlayerDiedException("YOU DIED");
                         }
                     }
                 }
             }catch (WrongChoiceException | CharacterOutOfBoundsException e){
-                printer.printString(e.getMessage());
+                printer.printString(e.getMessage(), ConsoleColors.RED);
             }
             dungeon.showMap();
         }
@@ -76,7 +77,7 @@ public class DefaultExploreService implements ExploreService {
     }
 
     Explore showExplorationMenu() throws WrongChoiceException, ExitGameException {
-        switch (input.readInput("exploration_menu")){
+        switch (input.readInput("exploration_menu", ConsoleColors.CYAN)){
             case "w":
                 return Explore.NORTH;
             case "a":
