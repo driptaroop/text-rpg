@@ -84,6 +84,8 @@ public class DefaultConsoleUIService implements ConsoleUIService {
     void newGame() {
         printer.printMessages("new_game", ConsoleColors.CYAN_UNDERLINED);
         player = characterCreatorService.createCharacter();
+        printer.printAscii("welcome");
+        printer.printMessageFormatter("player_creation_welcome", ConsoleColors.GREEN_BOLD_BRIGHT, player.getName());
         monsters = characterCreatorService.getMonsters();
     }
 }

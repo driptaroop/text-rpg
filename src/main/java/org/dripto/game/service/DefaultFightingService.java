@@ -21,6 +21,7 @@ public class DefaultFightingService {
     GameInput gameInput = GameInput.getInstance();
 
     public FightResult initiateFight(Player player, NPC enemy) {
+        printer.printAscii("fight");
         printer.printMessageFormatter("fight_initiate", ConsoleColors.RED_UNDERLINED, enemy.getName());
         printer.printMessageFormatter("enemy_fight_init_status", ConsoleColors.CYAN_UNDERLINED, enemy.getWeapon().getName(), enemy.getShield().getName());
         FightResult result = fight(resolveInitiative(player, enemy));

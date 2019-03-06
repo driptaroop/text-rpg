@@ -2,10 +2,10 @@ package org.dripto.game.game;
 
 import org.dripto.game.util.ConsoleColors;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class GameMessagePrinter {
 
@@ -56,5 +56,19 @@ public class GameMessagePrinter {
         System.out.println(color.getColor() + msg);
         System.out.println(ConsoleColors.RESET.getColor());
         System.out.flush();
+    }
+
+    public void printAscii(String file){
+        printString(readAscii(file), ConsoleColors.RESET);
+    }
+
+    public String readAscii(String file){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                getClass().getClassLoader().getResourceAsStream(file + ".txt")));) {
+            return br.lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }

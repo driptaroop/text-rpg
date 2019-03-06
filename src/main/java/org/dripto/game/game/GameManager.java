@@ -11,8 +11,10 @@ public class GameManager {
 
     ConsoleUIService consoleUIService = new DefaultConsoleUIService();
 
+    GameMessagePrinter printer = GameMessagePrinter.getInstance();
     public void init(){
         try {
+            printer.printAscii("dnd");
             consoleUIService.init();
         } catch (ExitGameException | PlayerDiedException e) {
             System.err.println(e.getMessage());
